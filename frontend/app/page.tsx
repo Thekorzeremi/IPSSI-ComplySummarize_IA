@@ -13,14 +13,14 @@ export default function Home() {
         </p>
         <a
           href="#chatbot"
-          className="inline-block px-10 py-4 bg-[#acacac5e] text-white font-semibold rounded-xl shadow-xl hover:bg-gray-600/20 focus:outline-none focus:ring-4 focus:ring-[#acacac5e]/60 transition-all text-xl mt-2 glow-btn"
+          className="inline-block px-10 py-4 bg-[#acacac5e] text-white font-semibold rounded-xl shadow-xl hover:bg-[#b6b6b69c] focus:outline-none focus:ring-4 focus:ring-[#acacac5e]/60 transition-all text-xl mt-2 glow-btn"
         >
           Résumer mon document
         </a>
       </section>
 
       {/* Présentation produit */}
-      <section className="w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-16 pt-32 pb-20">
+      <section className="w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-16 pt-32 pb-20 animate-fade-up">
         <div className="flex-1 flex flex-col gap-6 text-left">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">ComplySummarize, votre copilote réglementaire</h2>
           <p className="text-lg md:text-xl text-gray-200">
@@ -39,7 +39,7 @@ export default function Home() {
       </section>
 
       {/* Avantages */}
-      <section className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 py-8">
+      <section className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 py-8 animate-fade-up animate-delay-1">
         <div className="bg-white/5 rounded-2xl p-7 flex flex-col gap-3 shadow-lg border border-white/10">
           <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/15 text-white text-2xl">⏱️</div>
           <h3 className="font-bold text-lg text-white">Gagnez un temps précieux</h3>
@@ -73,7 +73,7 @@ export default function Home() {
       </section>
 
       {/* Tarifs */}
-      <section className="w-full max-w-6xl mx-auto py-16 flex flex-col items-center">
+      <section className="w-full max-w-6xl mx-auto py-16 flex flex-col items-center animate-fade-up animate-delay-2">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-10">Des tarifs adaptés à tous les besoins</h2>
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Gratuit */}
@@ -118,6 +118,54 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section className="w-full max-w-4xl mx-auto py-16 animate-fade-up animate-delay-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-10 text-center">FAQ</h2>
+        <div className="flex flex-col gap-6">
+          <details className="bg-white/5 rounded-xl p-6 border border-white/10 group" open>
+            <summary className="cursor-pointer text-lg font-semibold text-white flex items-center justify-between">
+              Comment fonctionne ComplySummarize&nbsp;?
+              <span className="ml-2 transition-transform group-open:rotate-180">▼</span>
+            </summary>
+            <p className="mt-3 text-gray-200">Notre IA analyse vos documents réglementaires, en extrait l’essentiel et vous fournit un résumé structuré, des obligations clés et des recommandations personnalisées.</p>
+          </details>
+          <details className="bg-white/5 rounded-xl p-6 border border-white/10 group">
+            <summary className="cursor-pointer text-lg font-semibold text-white flex items-center justify-between">
+              Mes documents sont-ils confidentiels&nbsp;?
+              <span className="ml-2 transition-transform group-open:rotate-180">▼</span>
+            </summary>
+            <p className="mt-3 text-gray-200">Oui, vos fichiers sont traités dans un environnement sécurisé, auto-hébergé, et ne sont jamais transmis à des tiers. Nous garantissons la confidentialité et la sécurité de vos données.</p>
+          </details>
+          <details className="bg-white/5 rounded-xl p-6 border border-white/10 group">
+            <summary className="cursor-pointer text-lg font-semibold text-white flex items-center justify-between">
+              Quels sont les tarifs et comment souscrire&nbsp;?
+              <span className="ml-2 transition-transform group-open:rotate-180">▼</span>
+            </summary>
+            <p className="mt-3 text-gray-200">Vous pouvez commencer gratuitement ou choisir une offre Pro/Entreprise selon vos besoins. L’inscription et la gestion des abonnements se font directement depuis l’interface.</p>
+          </details>
+          <details className="bg-white/5 rounded-xl p-6 border border-white/10 group">
+            <summary className="cursor-pointer text-lg font-semibold text-white flex items-center justify-between">
+              Quels types de documents puis-je résumer&nbsp;?
+              <span className="ml-2 transition-transform group-open:rotate-180">▼</span>
+            </summary>
+            <p className="mt-3 text-gray-200">ComplySummarize prend en charge la majorité des formats courants (PDF, Word, texte, etc.) et s’adapte à la taille et la complexité de vos documents professionnels.</p>
+          </details>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="w-full py-10 flex flex-col items-center justify-center text-center bg-transparent animate-fade-in animate-delay-5">
+        <div className="text-white font-semibold text-lg flex items-center gap-2 mb-2">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="16" fill="#24292f" /><text x="16" y="21" textAnchor="middle" fontSize="16" fill="#fff" fontFamily="monospace">CS</text></svg>
+          ComplySummarize
+        </div>
+        <div className="text-gray-400 text-sm mb-2">&copy; {new Date().getFullYear()} ComplySummarize. Tous droits réservés.</div>
+        <div className="flex gap-4 text-gray-400 text-sm">
+          <a href="#" className="hover:text-white transition">Mentions légales</a>
+          <a href="#" className="hover:text-white transition">Confidentialité</a>
+          <a href="#" className="hover:text-white transition">Contact</a>
+        </div>
+      </footer>
     </main>
   );
 }
