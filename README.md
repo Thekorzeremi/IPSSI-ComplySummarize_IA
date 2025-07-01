@@ -22,3 +22,4 @@ Aucune API externe n’est utilisée.
 winget install -e --id OpenJS.NodeJS.LTS
 winget install -e --id Python.Python.3
 winget install -e --id Ollama.Ollama
+ollama pull mistral
