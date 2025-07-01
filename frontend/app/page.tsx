@@ -38,7 +38,7 @@ export default function Home() {
           Gagnez un temps précieux dans l’analyse de vos documents réglementaires grâce à l’IA. Résumez, synthétisez et exploitez l’essentiel en quelques secondes.
         </p>
         <a
-          href="#chatbot"
+          href="/auth"
           className="inline-block px-10 py-4 bg-[#acacac5e] text-white font-semibold rounded-xl shadow-xl hover:bg-[#b6b6b69c] focus:outline-none focus:ring-4 focus:ring-[#acacac5e]/60 transition-all text-xl mt-2 glow-btn"
         >
           Résumer mon document

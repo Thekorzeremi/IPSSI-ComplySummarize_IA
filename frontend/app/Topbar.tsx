@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Topbar() {
   return (
@@ -13,8 +15,11 @@ export default function Topbar() {
         </span>
       </div>
       <nav className="flex items-center gap-2">
-        <Link href="/signup" className="px-4 py-1.5 rounded-md text-sm font-medium text-gray-200 hover:bg-gray-700 transition-colors">S'inscrire</Link>
-        <Link href="/login" className="px-4 py-1.5 rounded-md text-sm font-medium border text-gray-200 border-gray-300 bg-gray-800 hover:bg-gray-600 transition-colors">Se connecter</Link>
+        {usePathname() === "/auth" ? (
+          <Link href="/" className="px-4 py-1.5 rounded-md text-sm font-medium border text-gray-200 border-gray-300 bg-gray-800 hover:bg-gray-600 transition-colors">Retour à l'accueil</Link>
+        ) : (
+          <Link href="/auth" className="px-4 py-1.5 rounded-md text-sm font-medium border text-gray-200 border-gray-300 bg-gray-800 hover:bg-gray-600 transition-colors">Commencer</Link>
+        )}
       </nav>
     </header>
   );
