@@ -25,8 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
+        style={{ paddingTop: 72 }} // Pour éviter que le contenu passe sous la topbar
       >
+        {require('./Topbar').default()}
         {children}
       </body>
     </html>
