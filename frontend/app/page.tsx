@@ -1,7 +1,33 @@
 "use client";
 import Image from "next/image";
 
+import { useEffect, useRef, useState } from "react";
+
+function useInView<T extends HTMLElement = HTMLElement>(options?: IntersectionObserverInit): [React.RefObject<T>, boolean] {
+  const ref = useRef<T>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const observer = new window.IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      options
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [ref, options]);
+
+  return [ref, inView];
+}
+
 export default function Home() {
+  const [presentationRef, presentationInView] = useInView<HTMLDivElement>({ threshold: 0.18 });
+  const [avantagesRef, avantagesInView] = useInView<HTMLDivElement>({ threshold: 0.18 });
+  const [tarifsRef, tarifsInView] = useInView<HTMLDivElement>({ threshold: 0.18 });
+  const [faqRef, faqInView] = useInView<HTMLDivElement>({ threshold: 0.18 });
+  const [footerRef, footerInView] = useInView<HTMLElement>({ threshold: 0.18 });
+
   return (
     <main className="flex flex-col items-center w-full px-4">
       <section className="w-full min-h-screen flex flex-col items-center justify-center text-center gap-8">
@@ -19,8 +45,10 @@ export default function Home() {
         </a>
       </section>
 
-      {/* Présentation produit */}
-      <section className="w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-16 pt-32 pb-20 animate-fade-up">
+      <section
+  ref={presentationRef}
+  className={`w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-16 pt-32 pb-20 transition-opacity duration-700 ${presentationInView ? "animate-fade-up" : "opacity-0"}`}
+>
         <div className="flex-1 flex flex-col gap-6 text-left">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">ComplySummarize, votre copilote réglementaire</h2>
           <p className="text-lg md:text-xl text-gray-200">
@@ -29,17 +57,19 @@ export default function Home() {
         </div>
         <div className="flex-1 flex items-center justify-center">
           <Image
-            src="/illustration-docs-ai.svg"
+            src="/reglementaire.png"
             alt="Illustration IA et documents"
-            width={400}
-            height={320}
+            width={600}
+            height={420}
             className="drop-shadow-2xl rounded-2xl border border-white/10 bg-white/5"
           />
         </div>
       </section>
 
-      {/* Avantages */}
-      <section className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 py-8 animate-fade-up animate-delay-1">
+      <section
+  ref={avantagesRef}
+  className={`w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 py-8 transition-opacity duration-700 ${avantagesInView ? "animate-fade-up animate-delay-1" : "opacity-0"}`}
+>
         <div className="bg-white/5 rounded-2xl p-7 flex flex-col gap-3 shadow-lg border border-white/10">
           <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/15 text-white text-2xl">⏱️</div>
           <h3 className="font-bold text-lg text-white">Gagnez un temps précieux</h3>
@@ -72,11 +102,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Tarifs */}
-      <section className="w-full max-w-6xl mx-auto py-16 flex flex-col items-center animate-fade-up animate-delay-2">
+      <section
+  ref={tarifsRef}
+  className={`w-full max-w-6xl mx-auto py-16 flex flex-col items-center transition-opacity duration-700 ${tarifsInView ? "animate-fade-up animate-delay-2" : "opacity-0"}`}
+>
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-10">Des tarifs adaptés à tous les besoins</h2>
         <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Gratuit */}
           <div className="bg-white/5 rounded-2xl p-8 flex flex-col items-center border border-white/10 shadow-lg">
             <h3 className="text-xl font-bold text-white mb-2">Gratuit</h3>
             <div className="text-4xl font-extrabold text-white mb-2">0€</div>
@@ -87,9 +118,8 @@ export default function Home() {
               <li>• Traitement de fichier jusqu'à 5mb</li>
               <li>• Accès web sécurisé</li>
             </ul>
-            <button className="mt-auto px-6 py-2 rounded-lg bg-white/15 text-white font-semibold hover:bg-green-700 transition">Commencer</button>
+            <button className="mt-auto px-6 py-2 rounded-lg bg-white/15 text-white font-semibold cursor-pointer hover:bg-white/30 transition">Commencer</button>
           </div>
-          {/* Pro */}
           <div className="bg-white/10 rounded-2xl p-8 flex flex-col items-center border-2 border-blue-500/60 shadow-xl scale-105">
             <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
             <div className="text-4xl font-extrabold text-blue-400 mb-2">19€<span className="text-lg font-medium text-blue-200">/mois</span></div>
@@ -101,25 +131,26 @@ export default function Home() {
               <li>• Support prioritaire</li>
               <li>• Accès web sécurisé</li>
             </ul>
-            <button className="mt-auto px-6 py-2 rounded-lg bg-blue-700/80 text-white font-semibold hover:bg-blue-700 transition">Choisir Pro</button>
+            <button className="mt-auto px-6 py-2 rounded-lg bg-blue-700/80 cursor-pointer text-white font-semibold hover:bg-blue-700 transition">Choisir Pro</button>
           </div>
-          {/* Entreprise */}
           <div className="bg-white/5 rounded-2xl p-8 flex flex-col items-center border border-white/10 shadow-lg">
             <h3 className="text-xl font-bold text-white mb-2">Entreprise</h3>
-            <div className="text-4xl font-extrabold text-purple-400 mb-2">Sur devis</div>
+            <div className="text-4xl font-extrabold text-white mb-2">Sur devis</div>
             <ul className="text-gray-200 mb-4 space-y-2 text-sm mt-4">
               <li>• Accès API</li>
               <li>• Personnalisation avancée</li>
               <li>• Gestion utilisateurs</li>
               <li>• Accompagnement expert</li>
             </ul>
-            <button className="mt-auto px-6 py-2 rounded-lg bg-purple-700/80 text-white font-semibold hover:bg-purple-700 transition">Contactez-nous</button>
+            <button className="mt-auto px-6 py-2 rounded-lg bg-white/15 text-white font-semibold hover:bg-white/30 cursor-pointer transition">Contactez-nous</button>
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="w-full max-w-4xl mx-auto py-16 animate-fade-up animate-delay-4">
+      <section
+  ref={faqRef}
+  className={`w-full max-w-4xl mx-auto py-16 transition-opacity duration-700 ${faqInView ? "animate-fade-up animate-delay-4" : "opacity-0"}`}
+>
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-10 text-center">FAQ</h2>
         <div className="flex flex-col gap-6">
           <details className="bg-white/5 rounded-xl p-6 border border-white/10 group" open>
@@ -153,8 +184,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="w-full py-10 flex flex-col items-center justify-center text-center bg-transparent animate-fade-in animate-delay-5">
+      <footer
+  ref={footerRef}
+  className={`w-full py-10 flex flex-col items-center justify-center text-center bg-transparent transition-opacity duration-700 ${footerInView ? "animate-fade-in animate-delay-5" : "opacity-0"}`}
+>
         <div className="text-white font-semibold text-lg flex items-center gap-2 mb-2">
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="16" fill="#24292f" /><text x="16" y="21" textAnchor="middle" fontSize="16" fill="#fff" fontFamily="monospace">CS</text></svg>
           ComplySummarize
