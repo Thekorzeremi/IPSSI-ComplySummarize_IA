@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useRef, useState } from 'react';
-import { X } from 'lucide-react';
+import { useRef, useState } from "react";
+import { X } from "lucide-react";
 
 export default function ChatbotPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -9,6 +9,7 @@ export default function ChatbotPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState<string | null>(null);
+  const [keyPoints, setKeyPoints] = useState<string[] | null>(null);
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -17,6 +18,7 @@ export default function ChatbotPage() {
     if (files.length > 0) {
       setUploadedFile(files[0]);
       setSummary(null);
+      setKeyPoints(null);
     }
   };
 
@@ -25,6 +27,7 @@ export default function ChatbotPage() {
     if (file) {
       setUploadedFile(file);
       setSummary(null);
+      setKeyPoints(null);
     }
   };
 
@@ -35,8 +38,9 @@ export default function ChatbotPage() {
   const handleRemove = () => {
     setUploadedFile(null);
     setSummary(null);
+    setKeyPoints(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -47,28 +51,58 @@ export default function ChatbotPage() {
     setSummary(null);
 
     try {
-        const formData = new FormData();
-        formData.append("file", uploadedFile);
+      const formData = new FormData();
+      formData.append("file", uploadedFile);
 
-        const response = await fetch("http://localhost:8000/api/summarize", {
+      const response = await fetch("http://localhost:8000/api/summarize", {
         method: "POST",
         body: formData,
-        });
+      });
 
-        if (!response.ok) {
+      if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Erreur inconnue");
-        }
+      }
 
-        const data = await response.json();
-        setSummary(data.summary);
+      const data = await response.json();
+      setSummary(data.summary);
     } catch (error: any) {
-        console.error("Erreur lors du résumé :", error);
-        setSummary("Erreur lors du résumé : " + error.message);
+      console.error("Erreur lors du résumé :", error);
+      setSummary("Erreur lors du résumé : " + error.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-    };
+  };
+
+  const handleKeyPoints = async () => {
+    if (!uploadedFile) return;
+
+    setLoading(true);
+    setKeyPoints(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", uploadedFile);
+
+      const response = await fetch("http://localhost:8000/api/extract-keypoints", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erreur inconnue");
+      }
+
+      const data = await response.json();
+      setKeyPoints(data.keyPoints);
+    } catch (error: any) {
+      console.error("Erreur lors de l'extraction des points clés :", error);
+      setKeyPoints(["Erreur : " + error.message]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-4 text-white space-y-6">
@@ -82,7 +116,7 @@ export default function ChatbotPage() {
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           className={`w-full max-w-xl p-10 border-4 border-dashed rounded-2xl transition-colors duration-300 cursor-pointer text-center
-            ${dragOver ? 'border-indigo-500 bg-indigo-500/10' : 'border-gray-600 bg-gray-800/30'}
+            ${dragOver ? "border-indigo-500 bg-indigo-500/10" : "border-gray-600 bg-gray-800/30"}
           `}
         >
           <input
@@ -111,17 +145,39 @@ export default function ChatbotPage() {
             </p>
           </div>
 
-          <button
-            onClick={handleSummarize}
-            disabled={loading}
-            className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition text-white text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? "Résumé en cours..." : "Résumer ce document"}
-          </button>
+          <div className="flex flex-col md:flex-row gap-4">
+            <button
+              onClick={handleSummarize}
+              disabled={loading}
+              className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition text-white text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Résumé en cours..." : "Résumer ce document"}
+            </button>
+
+            <button
+              onClick={handleKeyPoints}
+              disabled={loading}
+              className="px-6 py-3 rounded-xl bg-green-600 hover:bg-green-700 transition text-white text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Analyse en cours..." : "Générer les points clés"}
+            </button>
+          </div>
 
           {summary && (
             <div className="max-w-xl w-full p-4 bg-gray-700 rounded-xl text-left text-sm">
+              <h3 className="text-white font-semibold mb-2">Résumé :</h3>
               <pre className="whitespace-pre-wrap">{summary}</pre>
+            </div>
+          )}
+
+          {keyPoints && (
+            <div className="max-w-xl w-full p-4 bg-gray-700 rounded-xl text-left text-sm">
+              <h3 className="text-white font-semibold mb-2">Points clés :</h3>
+              <ul className="list-disc list-inside space-y-1">
+                {keyPoints.map((point, idx) => (
+                  <li key={idx}>{point}</li>
+                ))}
+              </ul>
             </div>
           )}
         </>

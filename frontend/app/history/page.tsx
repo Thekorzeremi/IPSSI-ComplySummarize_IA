@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const userId = "6864ee079e929c86b9a77215"; // ⚠️ À remplacer par le vrai ObjectId du user
+const userId = "6864ee079e929c86b9a77215";
 
 interface Conversation {
   id: string;
@@ -20,21 +20,39 @@ export default function History() {
         const res = await fetch(`http://localhost:8000/api/documents?userId=${userId}`);
         const data = await res.json();
 
-        const formatted: Conversation[] = data.map((doc: any) => ({
-          id: doc._id,
-          title: doc.fileName,
-          createdAt: new Date(doc.createdAt).toLocaleString(),
-          messages: [
-            {
-              role: "user",
-              content: `[Document uploadé] ${doc.fileName}`,
-            },
-            {
-              role: "assistant",
-              content: `Résumé : ${doc.summary || "(Aucun résumé disponible)"}`,
-            },
-          ],
-        }));
+        const formatted: Conversation[] = data.map((doc: any) => {
+          const baseMessage = {
+            role: "user" as const,
+            content: `[Document uploadé] ${doc.fileName}`,
+          };
+
+          let assistantMessage;
+
+          if (doc.summary) {
+            assistantMessage = {
+              role: "assistant" as const,
+              content: `Résumé : ${doc.summary}`,
+            };
+          } else if (doc.keyPoints && doc.keyPoints.length > 0) {
+            assistantMessage = {
+              role: "assistant" as const,
+              content:
+                "Points clés :\n" + doc.keyPoints.map((pt: string) => `• ${pt}`).join("\n"),
+            };
+          } else {
+            assistantMessage = {
+              role: "assistant" as const,
+              content: "(Aucun résumé ou point clé disponible)",
+            };
+          }
+
+          return {
+            id: doc._id,
+            title: doc.fileName,
+            createdAt: new Date(doc.createdAt).toLocaleString(),
+            messages: [baseMessage, assistantMessage],
+          };
+        });
 
         setConversations(formatted);
         if (formatted.length > 0) setSelectedId(formatted[0].id);
@@ -76,7 +94,9 @@ export default function History() {
               key={idx}
               className={`max-w-2xl rounded-xl px-5 py-4 shadow-lg border border-white/10 ${msg.role === "user" ? "bg-[#232834] ml-auto text-right" : "bg-[#21242a] mr-auto text-left"}`}
             >
-              <div className={`text-sm ${msg.role === "user" ? "text-blue-300" : "text-gray-200"}`}>{msg.content}</div>
+              <div className={`text-sm ${msg.role === "user" ? "text-blue-300" : "text-gray-200"}`}>
+                {msg.content}
+              </div>
             </div>
           ))}
         </div>
