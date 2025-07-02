@@ -2,6 +2,9 @@ import express, { Application } from "express";
 import mongoose from "mongoose";
 import summarizeRouter from "./routes/summarizeRoute";
 import dotenv from "dotenv";
+import cors from "cors";
+
+
 
 dotenv.config();
 
@@ -14,6 +17,7 @@ const MONGO_URI = `${dbDialect}://${dbHost}:${dbPort}/${dbName}`;
 
 
 const app: Application = express();
+app.use(cors());
 
 // Connexion à MongoDB
 mongoose.connect(MONGO_URI)

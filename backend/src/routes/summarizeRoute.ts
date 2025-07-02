@@ -6,6 +6,6 @@ import { summarizePdf } from "../controllers/summarizeController";
 const router = Router();
 const upload = multer({ dest: path.resolve("uploads") });
 
-router.post("/summarize", upload.single("pdf"), summarizePdf);
+router.post("/summarize", upload.single("file"), summarizePdf);
 
 export default router;

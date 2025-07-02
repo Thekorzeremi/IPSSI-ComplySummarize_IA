@@ -47,19 +47,28 @@ export default function ChatbotPage() {
     setSummary(null);
 
     try {
-      const formData = new FormData();
-      formData.append('file', uploadedFile);
+        const formData = new FormData();
+        formData.append("file", uploadedFile);
 
-      //TODO Relier à l'appel IA du backend
-      await new Promise((r) => setTimeout(r, 2000));
-      setSummary("Résumé simulé du document. Voici les points essentiels...");
-    } catch (error) {
-      console.error("Erreur lors du résumé :", error);
-      setSummary("Erreur lors du résumé.");
+        const response = await fetch("http://localhost:8000/api/summarize", {
+        method: "POST",
+        body: formData,
+        });
+
+        if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erreur inconnue");
+        }
+
+        const data = await response.json();
+        setSummary(data.summary);
+    } catch (error: any) {
+        console.error("Erreur lors du résumé :", error);
+        setSummary("Erreur lors du résumé : " + error.message);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+    };
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-4 text-white space-y-6">
@@ -112,7 +121,7 @@ export default function ChatbotPage() {
 
           {summary && (
             <div className="max-w-xl w-full p-4 bg-gray-700 rounded-xl text-left text-sm">
-              <p>{summary}</p>
+              <pre className="whitespace-pre-wrap">{summary}</pre>
             </div>
           )}
         </>
