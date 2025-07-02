@@ -65,7 +65,7 @@ export const extractKeyPoints: RequestHandler = async (
 
     // 4️⃣ Sauvegarde dans MongoDB
     await Document.create({
-      user: "6864ee079e929c86b9a77215", // ← à remplacer plus tard par req.user.id
+      user: req.body.userId || "inconnu",
       fileName: uploadedFile.originalname,
       size: uploadedFile.size,
       keyPoints,

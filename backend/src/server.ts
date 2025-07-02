@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import documentRouter from "./routes/documentRoute";
 import extractKeyPointsRoute from "./routes/extractKeyPointsRoute";
+import authRouter from "./routes/userRoute"
 
 
 
@@ -20,6 +21,7 @@ const MONGO_URI = `${dbDialect}://${dbHost}:${dbPort}/${dbName}`;
 
 const app: Application = express();
 app.use(cors());
+app.use(express.json());
 
 // Connexion à MongoDB
 mongoose.connect(MONGO_URI)
@@ -37,6 +39,7 @@ mongoose.connect(MONGO_URI)
 app.use("/api", summarizeRouter);
 app.use("/api", extractKeyPointsRoute);
 app.use("/api", documentRouter);
+app.use("/api", authRouter);
 
 app.get("/", function (req, res) {
   res.send("Hello World!");

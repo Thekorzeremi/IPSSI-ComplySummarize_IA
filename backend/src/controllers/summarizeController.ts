@@ -61,7 +61,7 @@ export const summarizePdf: RequestHandler = async (req, res, next) => {
   const summaryText = (ollamaResponse.data.response ?? "").trim();
 
   await Document.create({
-      user: "6864ee079e929c86b9a77215",
+      user: req.body.userId || "inconnu",
       fileName: req.file?.originalname,
       size: req.file?.size,
       summary: summaryText,

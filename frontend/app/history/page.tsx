@@ -1,8 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const userId = "6864ee079e929c86b9a77215";
-
 interface Conversation {
   id: string;
   title: string;
@@ -13,8 +11,23 @@ interface Conversation {
 export default function History() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedId, setSelectedId] = useState<string>("");
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        setUserId(parsed.id);
+      } catch (e) {
+        console.error("Erreur parsing user dans localStorage", e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+
     const fetchConversations = async () => {
       try {
         const res = await fetch(`http://localhost:8000/api/documents?userId=${userId}`);
@@ -62,10 +75,10 @@ export default function History() {
     };
 
     fetchConversations();
-  }, []);
+  }, [userId]);
 
   const selected = conversations.find((c) => c.id === selectedId);
-
+  
   return (
     <div className="flex h-[calc(100vh-64px)] bg-[#181c2375] rounded-xl overflow-hidden shadow-xl border border-white/10 mt-8 mx-auto max-w-5xl">
       <aside className="w-64 bg-[#13161b63] border-r border-white/10 flex flex-col">
