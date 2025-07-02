@@ -1,71 +1,51 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const conversations = [
-  {
-    id: "1",
-    title: "RGPD_Contrat_2024.pdf",
-    createdAt: "2025-06-30 14:22",
-    messages: [
-      {
-        role: "user",
-        content: "[Document uploadé] RGPD_Contrat_2024.pdf",
-      },
-      {
-        role: "assistant",
-        content: "Résumé : Ce contrat RGPD détaille les obligations de conformité pour les sous-traitants, les droits des personnes concernées, et les procédures de notification en cas de violation...",
-      },
-    ],
-  },
-  {
-    id: "2",
-    title: "Directive_MIFID2.docx",
-    createdAt: "2025-06-28 09:10",
-    messages: [
-      {
-        role: "user",
-        content: "[Document uploadé] Directive_MIFID2.docx",
-      },
-      {
-        role: "assistant",
-        content: "Résumé : La directive MIFID2 vise à renforcer la transparence des marchés financiers européens, améliorer la protection des investisseurs, et encadrer les pratiques de conseil...",
-      },
-    ],
-  },
-  {
-    id: "3",
-    title: "RGPD_Contrat_2024.pdf",
-    createdAt: "2025-06-30 14:22",
-    messages: [
-      {
-        role: "user",
-        content: "[Document uploadé] RGPD_Contrat_2024.pdf",
-      },
-      {
-        role: "assistant",
-        content: "Résumé : Ce contrat RGPD détaille les obligations de conformité pour les sous-traitants, les droits des personnes concernées, et les procédures de notification en cas de violation...",
-      },
-    ],
-  },
-  {
-    id: "4",
-    title: "RGPD_Contrat_2024.pdf",
-    createdAt: "2025-06-30 14:22",
-    messages: [
-      {
-        role: "user",
-        content: "[Document uploadé] RGPD_Contrat_2024.pdf",
-      },
-      {
-        role: "assistant",
-        content: "Résumé : Ce contrat RGPD détaille les obligations de conformité pour les sous-traitants, les droits des personnes concernées, et les procédures de notification en cas de violation...",
-      },
-    ],
-  },
-];
+const userId = "6864ee079e929c86b9a77215"; // ⚠️ À remplacer par le vrai ObjectId du user
+
+interface Conversation {
+  id: string;
+  title: string;
+  createdAt: string;
+  messages: { role: "user" | "assistant"; content: string }[];
+}
 
 export default function History() {
-  const [selectedId, setSelectedId] = useState(conversations[0]?.id || "");
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [selectedId, setSelectedId] = useState<string>("");
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/documents?userId=${userId}`);
+        const data = await res.json();
+
+        const formatted: Conversation[] = data.map((doc: any) => ({
+          id: doc._id,
+          title: doc.fileName,
+          createdAt: new Date(doc.createdAt).toLocaleString(),
+          messages: [
+            {
+              role: "user",
+              content: `[Document uploadé] ${doc.fileName}`,
+            },
+            {
+              role: "assistant",
+              content: `Résumé : ${doc.summary || "(Aucun résumé disponible)"}`,
+            },
+          ],
+        }));
+
+        setConversations(formatted);
+        if (formatted.length > 0) setSelectedId(formatted[0].id);
+      } catch (err) {
+        console.error("Erreur récupération documents :", err);
+      }
+    };
+
+    fetchConversations();
+  }, []);
+
   const selected = conversations.find((c) => c.id === selectedId);
 
   return (

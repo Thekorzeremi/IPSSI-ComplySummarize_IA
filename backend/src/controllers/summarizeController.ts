@@ -1,9 +1,11 @@
 import { RequestHandler } from "express";
 import { execFile } from "child_process";
 import { unlink } from "fs/promises";
+import { Document } from "../models/documentModel";
 import axios from "axios";
 import path from "path";
 import util from "util";
+
 
 axios.defaults.timeout = 120_000;
 
@@ -56,21 +58,31 @@ export const summarizePdf: RequestHandler = async (req, res, next) => {
     return;                                 
   }
 
-  /* 4️⃣  Réponse OK au client ---------------------------------------- */
-  res.json({ summary: (ollamaResponse.data.response ?? "").trim() });
-} catch (err) {
-  /* 5️⃣  Gestion des erreurs Node/Axios ------------------------------ */
-  console.error("❌ Erreur dans summarizePdf:", err);
-  if (axios.isAxiosError(err)) {
-    res.status(502).json({
-      error: "Appel à Ollama impossible",
-      details: err.message
+  const summaryText = (ollamaResponse.data.response ?? "").trim();
+
+  await Document.create({
+      user: "6864ee079e929c86b9a77215",
+      fileName: req.file?.originalname,
+      size: req.file?.size,
+      summary: summaryText,
     });
-  } else {
-    next(err);                              // délègue au middleware d’erreurs
+
+
+  /* 4️⃣  Réponse OK au client ---------------------------------------- */
+  res.json({ summary: summaryText });
+  } catch (err) {
+    /* 5️⃣  Gestion des erreurs Node/Axios ------------------------------ */
+    console.error("❌ Erreur dans summarizePdf:", err);
+    if (axios.isAxiosError(err)) {
+      res.status(502).json({
+        error: "Appel à Ollama impossible",
+        details: err.message
+      });
+    } else {
+      next(err);                              // délègue au middleware d’erreurs
+    }
+  } finally {
+    /* 6️⃣  Nettoyage du fichier temporaire ----------------------------- */
+    await unlink(tmpPath).catch(() => void 0);
   }
-} finally {
-  /* 6️⃣  Nettoyage du fichier temporaire ----------------------------- */
-  await unlink(tmpPath).catch(() => void 0);
-}
 };
