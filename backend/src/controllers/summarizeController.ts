@@ -5,6 +5,8 @@ import axios from "axios";
 import path from "path";
 import util from "util";
 
+axios.defaults.timeout = 120_000;
+
 
 const pdfScriptPath = path.resolve(process.cwd(), "src", "pdf_reader.py");
 
@@ -29,14 +31,14 @@ export const summarizePdf: RequestHandler = async (req, res, next) => {
 
   /* 2️⃣  Génération du résumé par Ollama ----------------------------- */
   const prompt =
-    `Fais un résumé clair et structuré du texte suivant :\n\n${text.slice(0, 3500)}`;
+    `Fais un résumé en français clair et structuré de 150 mots maximum sur le texte suivant : ${text.slice(0, 3500)}`; // changer la langue en fonction du choix de l'utilisateur
 
   const ollamaResponse = await axios.post(
     "http://127.0.0.1:11434/api/generate",   // ← loopback explicite
     { model: "mistral", prompt, stream: false },
     {
       headers: { "Content-Type": "application/json" },
-      timeout: 60_000,                       // 60 s
+      timeout: 120_000,                       // 2min
       validateStatus: () => true
     }
   );
