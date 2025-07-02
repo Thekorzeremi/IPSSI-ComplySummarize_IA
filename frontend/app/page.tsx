@@ -116,27 +116,30 @@ export default function Home() {
               <li>• Résumés IA standards</li>
               <li>• Export PDF/Word</li>
               <li>• Traitement de fichier jusqu'à 5mb</li>
+              <li>• Historique des résumés</li>
               <li>• Accès web sécurisé</li>
             </ul>
             <button className="mt-auto px-6 py-2 rounded-lg bg-white/15 text-white font-semibold cursor-pointer hover:bg-white/30 transition">Commencer</button>
           </div>
-          <div className="bg-white/10 rounded-2xl p-8 flex flex-col items-center border-2 border-blue-500/60 shadow-xl scale-105">
+          <div className="bg-white/10 rounded-2xl p-8 flex flex-col items-center border-2 border-white/60 shadow-xl scale-105">
             <h3 className="text-xl font-bold text-white mb-2">Pro</h3>
-            <div className="text-4xl font-extrabold text-blue-400 mb-2">19€<span className="text-lg font-medium text-blue-200">/mois</span></div>
+            <div className="text-4xl font-extrabold text-white mb-2">9,99€<span className="text-lg font-medium text-white">/mois</span></div>
             <ul className="text-gray-200 mb-4 space-y-2 text-sm">
               <li>• Résumés illimités</li>
               <li>• Synthèses avancées</li>
               <li>• Export PDF/Word</li>
               <li>• Pas de limite de traitement</li>
               <li>• Support prioritaire</li>
+              <li>• Historique des résumés</li>
               <li>• Accès web sécurisé</li>
             </ul>
-            <button className="mt-auto px-6 py-2 rounded-lg bg-blue-700/80 cursor-pointer text-white font-semibold hover:bg-blue-700 transition">Choisir Pro</button>
+            <button className="mt-auto px-6 py-2 rounded-lg bg-white/15 cursor-pointer text-white font-semibold hover:bg-white/30 transition">Choisir Pro</button>
           </div>
           <div className="bg-white/5 rounded-2xl p-8 flex flex-col items-center border border-white/10 shadow-lg">
             <h3 className="text-xl font-bold text-white mb-2">Entreprise</h3>
             <div className="text-4xl font-extrabold text-white mb-2">Sur devis</div>
             <ul className="text-gray-200 mb-4 space-y-2 text-sm mt-4">
+              <li>• Fonctionnalités de la formule Pro</li>
               <li>• Accès API</li>
               <li>• Personnalisation avancée</li>
               <li>• Gestion utilisateurs</li>
