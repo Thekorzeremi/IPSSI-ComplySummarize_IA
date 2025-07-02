@@ -11,6 +11,8 @@ export default function ChatbotPage() {
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState<string | null>(null);
   const [keyPoints, setKeyPoints] = useState<string[] | null>(null);
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = user?.id;
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -54,6 +56,7 @@ export default function ChatbotPage() {
     try {
       const formData = new FormData();
       formData.append("file", uploadedFile);
+      formData.append("userId", userId); // ⬅️ on ajoute dynamiquement le userId
 
       const response = await fetch("http://localhost:8000/api/summarize", {
         method: "POST",
@@ -84,6 +87,7 @@ export default function ChatbotPage() {
     try {
       const formData = new FormData();
       formData.append("file", uploadedFile);
+      formData.append("userId", userId);
 
       const response = await fetch("http://localhost:8000/api/extract-keypoints", {
         method: "POST",

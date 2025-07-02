@@ -1,11 +1,20 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-import { useEffect } from "react";
-
-function AuthForm() {
+export default function AuthPage() {
   const [isRegister, setIsRegister] = useState(false);
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirm: "",
+    terms: false,
+  });
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const prev = document.body.style.overflowY;
@@ -14,77 +23,81 @@ function AuthForm() {
       document.body.style.overflowY = prev || "auto";
     };
   }, []);
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirm: "",
-    terms: false,
-  });
-  const [error, setError] = useState("");
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-  }
+  };
 
-  function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (isRegister) {
-      if (!form.firstName || !form.lastName || !form.email || !form.password || !form.confirm) {
-        setError("Tous les champs sont requis.");
-        return;
+
+    try {
+      if (isRegister) {
+        const { username, email, password, confirm, terms } = form;
+        if (!username || !email || !password || !confirm) {
+          return setError("Tous les champs sont requis.");
+        }
+        if (password !== confirm) {
+          return setError("Les mots de passe ne correspondent pas.");
+        }
+        if (!terms) {
+          return setError("Vous devez accepter les conditions d'utilisation.");
+        }
+
+        const res = await fetch("http://localhost:8000/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur d'inscription");
+
+        localStorage.setItem("user", JSON.stringify(data.user));
+        router.push("/chatbot");
+      } else {
+        const { email, password } = form;
+        if (!email || !password) return setError("Email et mot de passe requis.");
+
+        const res = await fetch("http://localhost:8000/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur de connexion");
+
+        localStorage.setItem("user", JSON.stringify(data.user));
+        router.push("/chatbot");
       }
-      if (form.password !== form.confirm) {
-        setError("Les mots de passe ne correspondent pas.");
-        return;
-      }
-      if (!form.terms) {
-        setError("Vous devez accepter les conditions d'utilisation.");
-        return;
-      }
-    } else {
-      if (!form.email || !form.password) {
-        setError("Email et mot de passe requis.");
-        return;
-      }
+    } catch (err: any) {
+      setError(err.message || "Une erreur est survenue.");
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center py-16 px-4">
-      <div className="w-full max-w-md bg-white/5  rounded-2xl shadow-xl border border-white/10 p-8 animate-fade-up">
+      <div className="w-full max-w-md bg-white/5 rounded-2xl shadow-xl border border-white/10 p-8 animate-fade-up">
         <h2 className="text-2xl font-bold text-white mb-6 text-center">
-          {isRegister ? "Bienvenue sur ComplySummarize" : "Ravi de vous revoir !  "}
+          {isRegister ? "Bienvenue sur ComplySummarize" : "Ravi de vous revoir !"}
         </h2>
         {error && <div className="mb-4 text-red-400 text-sm text-center">{error}</div>}
         <form className="flex flex-col gap-4" onSubmit={handleSubmit} autoComplete="off">
           {isRegister && (
-            <div className="flex flex-col gap-4">
-              <input
-                name="lastName"
-                type="text"
-                placeholder="Nom"
-                value={form.lastName}
-                onChange={handleChange}
-                className="flex-1 rounded-lg px-4 py-3 bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50"
-                autoComplete="family-name"
-              />
-              <input
-                name="firstName"
-                type="text"
-                placeholder="Prénom"
-                value={form.firstName}
-                onChange={handleChange}
-                className="flex-1 rounded-lg px-4 py-3 bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50"
-                autoComplete="given-name"
-              />
-            </div>
+            <input
+              name="username"
+              type="text"
+              placeholder="Nom d'utilisateur"
+              value={form.username}
+              onChange={handleChange}
+              className="rounded-lg px-4 py-3 bg-white/10 text-white placeholder-gray-400 border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/50"
+            />
           )}
           <input
             name="email"
@@ -124,7 +137,10 @@ function AuthForm() {
                 onChange={handleChange}
                 className="accent-white w-4 h-4 rounded border border-white/20"
               />
-              J'accepte les <Link href="#" className="underline hover:text-white">conditions d'utilisation</Link>
+              J'accepte les{" "}
+              <Link href="#" className="underline hover:text-white">
+                conditions d'utilisation
+              </Link>
             </label>
           )}
           {!isRegister && (
@@ -132,7 +148,7 @@ function AuthForm() {
               <button
                 type="button"
                 className="underline cursor-pointer mt-2 hover:text-white"
-                onClick={() => alert('À implémenter !')}
+                onClick={() => alert("À implémenter !")}
               >
                 Mot de passe oublié ?
               </button>
@@ -148,14 +164,14 @@ function AuthForm() {
         <div className="mt-6 text-center text-gray-300 text-sm">
           {isRegister ? (
             <>
-              Déjà un compte ?{' '}
+              Déjà un compte ?{" "}
               <button className="underline cursor-pointer hover:text-white" onClick={() => setIsRegister(false)}>
                 Se connecter
               </button>
             </>
           ) : (
             <>
-              Pas encore de compte ?{' '}
+              Pas encore de compte ?{" "}
               <button className="underline cursor-pointer hover:text-white" onClick={() => setIsRegister(true)}>
                 S'inscrire
               </button>
@@ -165,8 +181,4 @@ function AuthForm() {
       </div>
     </div>
   );
-}
-
-export default function AuthPage() {
-  return <AuthForm />;
 }

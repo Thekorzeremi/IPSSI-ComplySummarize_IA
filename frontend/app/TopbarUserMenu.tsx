@@ -1,11 +1,29 @@
 "use client";
+
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { User, LogOut, ChevronDown } from "lucide-react";
 
-export default function TopbarUserMenu({ firstName, lastName }: { firstName: string, lastName: string }) {
+interface UserData {
+  username: string;
+  email: string;
+}
+
+export default function TopbarUserMenu() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch (e) {
+        console.error("Erreur parsing localStorage user:", e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -21,6 +39,11 @@ export default function TopbarUserMenu({ firstName, lastName }: { firstName: str
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.href = "/auth";
+  };
+
   return (
     <div className="relative" ref={menuRef}>
       <button
@@ -28,7 +51,7 @@ export default function TopbarUserMenu({ firstName, lastName }: { firstName: str
         className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-200 bg-gray-800 border border-gray-300 hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
         <User className="w-5 h-5" />
-        <span>{firstName} {lastName}</span>
+        <span>{user?.username || "Utilisateur"}</span>
         <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : "rotate-0"}`} />
       </button>
       {open && (
@@ -40,13 +63,12 @@ export default function TopbarUserMenu({ firstName, lastName }: { firstName: str
           >
             <User className="w-4 h-4" /> Mon profil
           </Link>
-          <Link
-            href="/auth"
-            className="flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-gray-700 rounded-b-md transition-colors"
-            onClick={() => setOpen(false)}
+          <button
+            onClick={handleLogout}
+            className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-gray-700 rounded-b-md transition-colors"
           >
             <LogOut className="w-4 h-4" /> Déconnexion
-          </Link>
+          </button>
         </div>
       )}
     </div>
