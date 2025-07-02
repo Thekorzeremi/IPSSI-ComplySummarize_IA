@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { X } from 'lucide-react';
+import Image from 'next/image';
 
 export default function ChatbotPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,27 +74,33 @@ export default function ChatbotPage() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-4 text-white space-y-6">
       {!uploadedFile ? (
-        <div
-          onClick={handleClick}
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragOver(true);
-          }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={handleDrop}
-          className={`w-full max-w-xl p-10 border-4 border-dashed rounded-2xl transition-colors duration-300 cursor-pointer text-center
-            ${dragOver ? 'border-indigo-500 bg-indigo-500/10' : 'border-gray-600 bg-gray-800/30'}
-          `}
-        >
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx,.txt"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            className="hidden"
-          />
-          <p className="text-lg font-semibold">Déposez un document ici ou cliquez pour en sélectionner un</p>
-        </div>
+        <>
+          <div className="flex items-center">
+            <Image src="/ai.png" alt="IA icon" width={60} height={60} className="filter grayscale mr-4 " />
+            <p className="text-4xl font-extrabold text-white/50">Qu'allez-vous résumer aujourd'hui ?</p>
+          </div>
+          <div
+            onClick={handleClick}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+            className={`w-full max-w-xl p-10 mt-4 border-4 border-dashed rounded-2xl transition-colors duration-300 cursor-pointer text-center
+              ${dragOver ? 'border-white bg-white/10' : 'border-white/25 bg-white/10'}
+            `}
+          >
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx,.txt"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <p className="text-md text-gray-200/50 font-semibold">Cliquez ou déposez un document ici</p>
+          </div>
+        </>
       ) : (
         <>
           <div className="relative w-full max-w-xl p-6 rounded-xl border border-gray-600 bg-gray-800/30 text-center">

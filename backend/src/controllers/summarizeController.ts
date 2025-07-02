@@ -22,7 +22,7 @@ export const summarizePdf: RequestHandler = async (req, res, next) => {
  try {
   /* 1️⃣  Extraction texte via pdfminer.six --------------------------- */
   const { stdout } = await execFileAsync(
-    "py",                               // ou "python" selon ton install
+    "python3",                               // ou "python" selon ton install
     [pdfScriptPath, tmpPath],
     { maxBuffer: 10 * 1024 * 1024 }     // 10 Mo
   );
@@ -31,14 +31,14 @@ export const summarizePdf: RequestHandler = async (req, res, next) => {
 
   /* 2️⃣  Génération du résumé par Ollama ----------------------------- */
   const prompt =
-    `Fais un résumé en français clair et structuré de 150 mots maximum sur le texte suivant : ${text.slice(0, 3500)}`; // changer la langue en fonction du choix de l'utilisateur
+    `Fais un résumé en français clair et structuré de 220 mots maximum sur le texte suivant : ${text.slice(0, 100000)}`; // changer la langue en fonction du choix de l'utilisateur
 
   const ollamaResponse = await axios.post(
     "http://127.0.0.1:11434/api/generate",   // ← loopback explicite
     { model: "mistral", prompt, stream: false },
     {
       headers: { "Content-Type": "application/json" },
-      timeout: 120_000,                       // 2min
+      timeout: 600_000,                       // 2min
       validateStatus: () => true
     }
   );
