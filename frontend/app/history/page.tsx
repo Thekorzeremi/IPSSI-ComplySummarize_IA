@@ -26,6 +26,14 @@ export default function History() {
   }, []);
 
   useEffect(() => {
+    const prev = document.body.style.overflowY;
+    document.body.style.overflowY = "hidden";
+    return () => {
+      document.body.style.overflowY = prev || "auto";
+    };
+  }, []);
+
+  useEffect(() => {
     if (!userId) return;
 
     const fetchConversations = async () => {

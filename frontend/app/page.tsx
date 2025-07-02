@@ -29,7 +29,7 @@ export default function Home() {
   const [footerRef, footerInView] = useInView<HTMLElement>({ threshold: 0.18 });
 
   return (
-    <main className="flex flex-col items-center w-full px-4">
+    <main className="flex flex-col items-center overflow-y-auto w-full px-4">
       <section className="w-full min-h-screen flex flex-col items-center justify-center text-center gap-8">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight drop-shadow-[0_2px_24px_rgba(80,80,200,0.25)]">
           La révolution de vos documents <br />est en marche

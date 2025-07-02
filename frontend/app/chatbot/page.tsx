@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import Image from 'next/image';
 
@@ -13,6 +13,14 @@ export default function ChatbotPage() {
   const [keyPoints, setKeyPoints] = useState<string[] | null>(null);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = user?.id;
+
+   useEffect(() => {
+      const prev = document.body.style.overflowY;
+      document.body.style.overflowY = "hidden";
+      return () => {
+        document.body.style.overflowY = prev || "auto";
+      };
+    }, []);
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
