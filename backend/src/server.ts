@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import summarizeRouter from "./routes/summarizeRoute";
 import dotenv from "dotenv";
 import cors from "cors";
+import documentRouter from "./routes/documentRoute";
 
 
 
@@ -33,6 +34,7 @@ mongoose.connect(MONGO_URI)
   });
 
 app.use("/api", summarizeRouter);
+app.use("/api", documentRouter);
 
 app.get("/", function (req, res) {
   res.send("Hello World!");
