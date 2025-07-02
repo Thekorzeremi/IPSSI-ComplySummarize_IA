@@ -1,9 +1,35 @@
 import express, { Application } from "express";
+import mongoose from "mongoose";
+import summarizeRouter from "./routes/summarizeRoute";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const PORT = 8000;
+const dbDialect = process.env.DB_DIALECT;
+const dbHost = process.env.DB_HOST;
+const dbPort = process.env.DB_PORT;
+const dbName = process.env.DB_NAME;
+const MONGO_URI = `${dbDialect}://${dbHost}:${dbPort}/${dbName}`;
+
+
 const app: Application = express();
+
+// Connexion à MongoDB
+mongoose.connect(MONGO_URI)
+  .then(() => {
+    console.log("Connected to MongoDB");
+    app.listen(PORT, function () {
+      console.log(`Server is listening on port ${PORT}!`);
+    });
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
+
+app.use("/api", summarizeRouter);
+
 app.get("/", function (req, res) {
- res.send("Hello World!");
-});
-app.listen(PORT, function () {
-  console.log(`Server is listening on port ${PORT}!`);
+  res.send("Hello World!");
 });
