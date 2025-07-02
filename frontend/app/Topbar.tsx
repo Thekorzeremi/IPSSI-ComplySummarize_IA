@@ -15,7 +15,7 @@ export default function Topbar() {
         </span>
       </div>
       <nav className="flex items-center gap-2">
-        {usePathname() === "/auth" ? (
+        {usePathname() === "/history" ? null : usePathname() === "/auth" ? (
           <Link href="/" className="px-4 py-1.5 rounded-md text-sm font-medium border text-gray-200 border-gray-300 bg-gray-800 hover:bg-gray-600 transition-colors">Retour à l'accueil</Link>
         ) : (
           <Link href="/auth" className="px-4 py-1.5 rounded-md text-sm font-medium border text-gray-200 border-gray-300 bg-gray-800 hover:bg-gray-600 transition-colors">Commencer</Link>
