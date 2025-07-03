@@ -77,7 +77,7 @@ export default function Profile() {
     }));
   }
 
-  function handleSave(e: React.FormEvent) {
+  async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setMessage("");
@@ -85,12 +85,29 @@ export default function Profile() {
       setError("Nom d'utilisateur et email sont requis.");
       return;
     }
-
-    const updatedUser = { ...user, ...form };
-    setUser(updatedUser);
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setEdit(false);
-    setMessage("Profil mis à jour avec succès.");
+    try {
+      const res = await fetch("http://localhost:8000/api/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: user._id || user.id,
+          username: form.username,
+          email: form.email,
+          password: form.password || undefined,
+          subscription: form.subscription,
+          newsletter: form.newsletter,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur inconnue");
+      setUser(data.user);
+      setForm({ ...data.user, password: "", subscription: data.user.subscription || "Free", newsletter: form.newsletter });
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setEdit(false);
+      setMessage("Profil mis à jour avec succès.");
+    } catch (err: any) {
+      setError(err.message || "Erreur lors de la mise à jour");
+    }
   }
 
   function handleDelete() {
