@@ -1,10 +1,12 @@
 "use client";
 
 import { useRef, useState, useEffect } from 'react';
+import useRequireAuth from "../useRequireAuth";
 import { X } from 'lucide-react';
 import Image from 'next/image';
 
 export default function ChatbotPage() {
+  useRequireAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);

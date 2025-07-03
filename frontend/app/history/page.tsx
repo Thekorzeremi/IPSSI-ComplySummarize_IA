@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import useRequireAuth from "../useRequireAuth";
 
 interface Conversation {
   id: string;
@@ -9,6 +10,7 @@ interface Conversation {
 }
 
 export default function History() {
+  useRequireAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedId, setSelectedId] = useState<string>("");
   const [userId, setUserId] = useState<string | null>(null);

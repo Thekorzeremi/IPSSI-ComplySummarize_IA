@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import useRequireAuth from "../useRequireAuth";
 import { useRouter } from "next/navigation";
 
 const subscriptions = [
@@ -117,8 +118,7 @@ export default function Profile() {
   }
 
   function handleChangeSub(newSub: string) {
-    const updated = { ...form, subscription: newSub };
-    setForm(updated);
+    setForm((prev: any) => ({ ...prev, subscription: newSub }));
     setUser((u: any) => {
       const updatedUser = { ...u, subscription: newSub };
       localStorage.setItem("user", JSON.stringify(updatedUser));

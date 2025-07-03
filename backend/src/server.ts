@@ -39,7 +39,7 @@ mongoose.connect(MONGO_URI)
 app.use("/api", summarizeRouter);
 app.use("/api", extractKeyPointsRoute);
 app.use("/api", documentRouter);
-app.use("/api/auth", authRouter);
+app.use("/api", authRouter);
 
 app.get("/", function (req, res) {
   res.send("Hello World!");
