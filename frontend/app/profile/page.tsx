@@ -63,8 +63,9 @@ export default function Profile() {
       return;
     }
     const parsed = JSON.parse(stored);
-    setUser(parsed);
-    setForm({ ...parsed, password: "", subscription: parsed.subscription || "Free", newsletter: true });
+    const subscription = parsed.subscription || "Free";
+    setUser({ ...parsed, subscription });
+    setForm({ ...parsed, password: "", subscription, newsletter: true });
   }, [router]);
 
   if (!user || !form) return null;
