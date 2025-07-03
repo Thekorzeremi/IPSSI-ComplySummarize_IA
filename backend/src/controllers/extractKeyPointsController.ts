@@ -26,7 +26,7 @@ export const extractKeyPoints: RequestHandler = async (
 
   try {
     // 1️⃣ Extraction texte via script Python
-    const { stdout } = await execFileAsync("py", [pdfScriptPath, tmpPath], {
+    const { stdout } = await execFileAsync("python3", [pdfScriptPath, tmpPath], {
       maxBuffer: 10 * 1024 * 1024, // 10 Mo
     });
 

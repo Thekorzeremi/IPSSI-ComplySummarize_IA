@@ -1,10 +1,12 @@
 "use client";
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import useRequireAuth from "../useRequireAuth";
 import { X } from 'lucide-react';
 import Image from 'next/image';
 
 export default function ChatbotPage() {
+  useRequireAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -13,6 +15,14 @@ export default function ChatbotPage() {
   const [keyPoints, setKeyPoints] = useState<string[] | null>(null);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const userId = user?.id;
+
+   useEffect(() => {
+      const prev = document.body.style.overflowY;
+      document.body.style.overflowY = "hidden";
+      return () => {
+        document.body.style.overflowY = prev || "auto";
+      };
+    }, []);
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -156,33 +166,44 @@ export default function ChatbotPage() {
             </p>
           </div>
 
+          <div className="items-center justify-center" style={{ visibility: loading ? 'visible' : 'hidden', display: loading ? 'flex' : 'none' }}>
+            {loading && (
+              <svg className="animate-spin mr-2 mt-4 absolute h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            )}
+          </div>
           <div className="flex flex-col md:flex-row gap-4">
-            <button
-              onClick={handleSummarize}
-              disabled={loading}
-              className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition text-white text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Résumé en cours..." : "Résumer ce document"}
-            </button>
 
-            <button
-              onClick={handleKeyPoints}
-              disabled={loading}
-              className="px-6 py-3 rounded-xl bg-green-600 hover:bg-green-700 transition text-white text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Analyse en cours..." : "Générer les points clés"}
-            </button>
+            {!loading && (
+              <>
+                <button
+                  onClick={handleSummarize}
+                  className="px-6 py-3 rounded-xl bg-white/20 hover:cursor-pointer hover:bg-white/30 transition text-white text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Résumer ce document
+                </button>
+
+                <button
+                  onClick={handleKeyPoints}
+                  className="px-6 py-3 rounded-xl bg-white/20 hover:cursor-pointer   hover:bg-white/30 transition text-white text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Générer les points clés
+                </button>
+              </>
+            )}
           </div>
 
           {summary && (
-            <div className="max-w-xl w-full p-4 bg-gray-700 rounded-xl text-left text-sm">
+            <div className="max-w-xl w-full p-4 bg-white/10 rounded-xl text-left text-sm">
               <h3 className="text-white font-semibold mb-2">Résumé :</h3>
               <pre className="whitespace-pre-wrap">{summary}</pre>
             </div>
           )}
 
           {keyPoints && (
-            <div className="max-w-xl w-full p-4 bg-gray-700 rounded-xl text-left text-sm">
+            <div className="max-w-xl w-full p-4 bg-white/10 rounded-xl text-left text-sm">
               <h3 className="text-white font-semibold mb-2">Points clés :</h3>
               <ul className="list-disc list-inside space-y-1">
                 {keyPoints.map((point, idx) => (
