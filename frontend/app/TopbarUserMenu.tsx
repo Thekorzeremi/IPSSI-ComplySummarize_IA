@@ -48,7 +48,7 @@ export default function TopbarUserMenu() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-200 bg-gray-800 border border-gray-300 hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-200 hover:cursor-pointer  border border-gray-300 hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
         <User className="w-5 h-5" />
         <span>{user?.username || "Utilisateur"}</span>

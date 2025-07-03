@@ -88,7 +88,7 @@ export default function History() {
   const selected = conversations.find((c) => c.id === selectedId);
   
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-[#181c2375] rounded-xl overflow-hidden shadow-xl border border-white/10 mt-8 mx-auto max-w-5xl">
+    <div className="flex h-[calc(100vh-200px)] bg-[#181c2375] rounded-xl overflow-hidden shadow-xl border border-white/10 mt-8 mx-auto max-w-5xl">
       <aside className="w-64 bg-[#13161b63] border-r border-white/10 flex flex-col">
         <div className="p-4 text-white font-bold text-lg border-b border-white/10">Historique</div>
         <nav className="flex-1 overflow-y-auto">
